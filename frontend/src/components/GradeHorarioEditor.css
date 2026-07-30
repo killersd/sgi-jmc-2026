@@ -1,0 +1,89 @@
+.grade-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.grade-turno h3 {
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.grade-turno__scroll {
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.grade-turno__table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  background: var(--bg-surface);
+}
+
+.grade-turno__table th {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+  background: var(--bg-surface-muted);
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border-subtle);
+  text-align: center;
+}
+
+.grade-turno__table td {
+  border-bottom: 1px solid var(--border-subtle);
+  border-right: 1px solid var(--border-subtle);
+  padding: 4px;
+  vertical-align: top;
+}
+
+.celula-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 110px;
+}
+
+.celula-editor select {
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 5px 4px;
+  font-size: 11.5px;
+  color: var(--text-strong);
+  background: transparent;
+  text-align: center;
+  text-overflow: ellipsis;
+}
+
+.celula-editor select:first-child {
+  font-weight: 600;
+}
+
+.celula-editor select:hover {
+  background: var(--bg-surface-muted);
+}
+
+.celula-editor select:focus {
+  outline: none;
+  border-color: var(--blue-500);
+  background: var(--bg-surface);
+  box-shadow: 0 0 0 3px var(--blue-100);
+}
+
+.grade-turno__table td:last-child { border-right: none; }
+.grade-turno__table tr:last-child td { border-bottom: none; }
+
+.grade-turno__periodo {
+  text-align: center;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 13px;
+  background: var(--bg-surface-muted);
+  width: 56px;
+}
+
+

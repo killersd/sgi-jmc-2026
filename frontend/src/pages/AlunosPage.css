@@ -1,0 +1,54 @@
+.page-header--row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.alunos-filtros {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.alunos-filtros__busca {
+  min-width: 240px;
+  flex: 1;
+}
+
+.alunos-page__error {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.alunos-page__table-wrapper {
+  overflow-x: auto;
+}
+
+.alunos-page__estado {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 32px 16px !important;
+}
+
+.alunos-page__acoes {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.alunos-page__paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 18px;
+  font-size: 13px;
+  color: var(--text-muted);
+}

@@ -1,0 +1,77 @@
+.declaracoes-busca {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 20px;
+  max-width: 520px;
+}
+
+.declaracoes-busca__campo {
+  flex: 1;
+}
+
+.declaracoes-page__error {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  max-width: 640px;
+}
+
+.aluno-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  max-width: 640px;
+  box-shadow: var(--shadow-sm);
+}
+
+.aluno-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.aluno-card__header h2 {
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+
+.aluno-card__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px 24px;
+  margin: 0 0 22px;
+}
+
+.aluno-card__grid dt {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.aluno-card__grid dd {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-strong);
+}
+
+.aluno-card__acao {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 18px;
+}
+
+.aluno-card__faltas {
+  flex: 1;
+  max-width: 260px;
+}

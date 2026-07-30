@@ -1,0 +1,51 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "API: restore",
+      "type": "shell",
+      "command": "dotnet restore",
+      "options": { "cwd": "${workspaceFolder}/api/SGI-JMC.Api" }
+    },
+    {
+      "label": "API: build",
+      "type": "shell",
+      "command": "dotnet build",
+      "options": { "cwd": "${workspaceFolder}/api/SGI-JMC.Api" },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "API: aplicar migrations",
+      "type": "shell",
+      "command": "dotnet ef database update",
+      "options": { "cwd": "${workspaceFolder}/api/SGI-JMC.Api" }
+    },
+    {
+      "label": "API: rodar (watch)",
+      "type": "shell",
+      "command": "dotnet watch run",
+      "isBackground": true,
+      "options": { "cwd": "${workspaceFolder}/api/SGI-JMC.Api" },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Frontend: instalar dependências",
+      "type": "shell",
+      "command": "npm install",
+      "options": { "cwd": "${workspaceFolder}/frontend" }
+    },
+    {
+      "label": "Frontend: rodar (dev)",
+      "type": "shell",
+      "command": "npm run dev",
+      "isBackground": true,
+      "options": { "cwd": "${workspaceFolder}/frontend" }
+    },
+    {
+      "label": "Rodar tudo (API + Frontend)",
+      "dependsOn": ["API: rodar (watch)", "Frontend: rodar (dev)"],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    }
+  ]
+}
