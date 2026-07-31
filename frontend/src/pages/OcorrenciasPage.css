@@ -1,7 +1,29 @@
+.ocorrencias-busca {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 20px;
+  max-width: 520px;
+}
+
+.ocorrencias-busca__campo {
+  flex: 1;
+}
+
+.ocorrencias-page__error {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  max-width: 640px;
+}
+
 .ocorrencias-tabs {
   display: flex;
   gap: 8px;
-  margin: 4px 0 20px;
+  margin: 18px 0 20px;
   border-bottom: 1px solid var(--border-subtle);
 }
 
@@ -22,34 +44,25 @@
   border-bottom-color: var(--blue-600);
 }
 
-.oficio-form {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: 24px;
-  max-width: 720px;
-  box-shadow: var(--shadow-sm);
-}
-
-.oficio-form__grid {
+.ocorrencias-form__grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 14px;
 }
 
-@media (max-width: 640px) {
-  .oficio-form__grid { grid-template-columns: 1fr; }
+@media (max-width: 560px) {
+  .ocorrencias-form__grid { grid-template-columns: 1fr; }
 }
 
-.oficio-form__span2 {
+.ocorrencias-form__span2 {
   grid-column: span 2;
 }
 
-@media (max-width: 640px) {
-  .oficio-form__span2 { grid-column: span 1; }
+@media (max-width: 560px) {
+  .ocorrencias-form__span2 { grid-column: span 1; }
 }
 
-.oficio-form textarea {
+.ocorrencias-form__grid textarea {
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
   padding: 10px 12px;
@@ -59,31 +72,13 @@
   resize: vertical;
 }
 
-.oficio-form textarea:focus {
+.ocorrencias-form__grid textarea:focus {
   border-color: var(--blue-500);
   outline: none;
   box-shadow: 0 0 0 3px var(--blue-100);
 }
 
-.oficio-form__error {
-  margin-top: 18px;
-  background: var(--danger-bg);
-  color: var(--danger);
-  border-radius: var(--radius-sm);
-  padding: 10px 12px;
-  font-size: 13px;
-}
-
-.oficio-form__sucesso {
-  margin-top: 18px;
-  background: var(--success-bg);
-  color: var(--success);
-  border-radius: var(--radius-sm);
-  padding: 10px 12px;
-  font-size: 13px;
-}
-
-.oficio-form__actions {
+.ocorrencias-form__actions {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;

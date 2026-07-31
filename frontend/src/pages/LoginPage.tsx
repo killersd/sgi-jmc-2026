@@ -28,16 +28,19 @@ export default function LoginPage() {
   return (
     <div className="login-screen">
       <aside className="login-brand">
-        <div className="login-brand__mark">JMC</div>
-        <h1 className="login-brand__title">SGI · JMC</h1>
+        <div className="login-brand__mark">SGI</div>
+        <h1 className="login-brand__title">SGI - Sistema de Gestão Institucionmal</h1>
         <p className="login-brand__subtitle">
-          Sistema de Gestão Institucional — matrículas, declarações e documentos
+          Matrículas, declarações e documentos
           escolares em um só lugar.
         </p>
         <ul className="login-brand__list">
-          <li>Cadastro e histórico de alunos</li>
+          <li>Cadastro de alunos</li>
           <li>Emissão de declarações e ofícios</li>
-          <li>Controle de turmas e séries</li>
+          <li>Controle de turmas</li>
+          <li>Controle de horários</li>
+          <li>Controle de professores</li>
+          <li>Advertências e suspensões</li>
         </ul>
       </aside>
 

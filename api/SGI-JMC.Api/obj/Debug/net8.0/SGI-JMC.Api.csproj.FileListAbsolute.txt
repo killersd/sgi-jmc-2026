@@ -130,3 +130,4 @@ C:\Users\alex.souza.3\Projetos\sgi-jmc\api\SGI-JMC.Api\obj\Debug\net8.0\refint\S
 C:\Users\alex.souza.3\Projetos\sgi-jmc\api\SGI-JMC.Api\obj\Debug\net8.0\SGI-JMC.Api.pdb
 C:\Users\alex.souza.3\Projetos\sgi-jmc\api\SGI-JMC.Api\obj\Debug\net8.0\SGI-JMC.Api.genruntimeconfig.cache
 C:\Users\alex.souza.3\Projetos\sgi-jmc\api\SGI-JMC.Api\obj\Debug\net8.0\ref\SGI-JMC.Api.dll
+C:\Users\alex.souza.3\Projetos\sgi-jmc\api\SGI-JMC.Api\obj\Debug\net8.0\SGI-JMC.Api.sourcelink.json

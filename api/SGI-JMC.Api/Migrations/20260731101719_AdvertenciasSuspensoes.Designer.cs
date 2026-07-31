@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SGI_JMC.Api.Data;
@@ -11,9 +12,11 @@ using SGI_JMC.Api.Data;
 namespace SGI_JMC.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260731101719_AdvertenciasSuspensoes")]
+    partial class AdvertenciasSuspensoes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -519,79 +522,6 @@ namespace SGI_JMC.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Oficios");
-                });
-
-            modelBuilder.Entity("SGI_JMC.Api.Models.OficioFuncao", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Assunto")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("CPF")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("CargaHoraria")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Cargo")
-                        .HasColumnType("text");
-
-                    b.Property<string>("CargoDestinatario")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("CidadeDestinatario")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("DataAssumiuFuncao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("DataEmissao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Destinatario")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Disciplina")
-                        .HasColumnType("text");
-
-                    b.Property<string>("EmitidoPor")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("FonteRecursos")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("NumeroOficio")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("SaudacaoGenero")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Tipo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Vinculo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OficiosFuncao");
                 });
 
             modelBuilder.Entity("SGI_JMC.Api.Models.Professor", b =>

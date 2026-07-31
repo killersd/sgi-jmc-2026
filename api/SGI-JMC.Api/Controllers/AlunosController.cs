@@ -24,6 +24,11 @@ public class AlunosController : ControllerBase
         a.CodigoSeed, a.AnoLetivo, a.AnoSerie, a.Turma, a.NumeroDoNis,
         a.CorrecaoDeFluxo, a.Transferido, a.UrlFoto);
 
+    // O Postgres exige DateTime com Kind=Utc para colunas "timestamp with time zone".
+    // Datas vindas do formulário (input type="date") chegam com Kind=Unspecified.
+    private static DateTime ComoUtc(DateTime data) =>
+        DateTime.SpecifyKind(data, DateTimeKind.Utc);
+
     // GET api/alunos?anoSerie=6&turma=A&busca=maria&transferido=false&page=1&pageSize=20
     [HttpGet]
     public async Task<ActionResult<PagedResult<AlunoDto>>> Listar(
@@ -77,7 +82,7 @@ public class AlunosController : ControllerBase
             Nome = request.Nome,
             Pai = request.Pai,
             Mae = request.Mae,
-            DataNascimento = request.DataNascimento,
+            DataNascimento = ComoUtc(request.DataNascimento),
             Endereco = request.Endereco,
             Telefone = request.Telefone,
             CodigoSeed = request.CodigoSeed,
@@ -109,7 +114,7 @@ public class AlunosController : ControllerBase
         aluno.Nome = request.Nome;
         aluno.Pai = request.Pai;
         aluno.Mae = request.Mae;
-        aluno.DataNascimento = request.DataNascimento;
+        aluno.DataNascimento = ComoUtc(request.DataNascimento);
         aluno.Endereco = request.Endereco;
         aluno.Telefone = request.Telefone;
         aluno.CodigoSeed = request.CodigoSeed;

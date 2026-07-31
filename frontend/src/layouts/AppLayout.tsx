@@ -10,6 +10,7 @@ const navItems = [
   { to: "/horarios", label: "Horários", icon: "▦", end: false },
   { to: "/professores", label: "Professores", icon: "👤", end: false },
   { to: "/turmas", label: "Turmas", icon: "🏷", end: false },
+  { to: "/ocorrencias", label: "Advertências/Suspensões", icon: "⚠", end: false },
 ];
 
 export default function AppLayout() {
@@ -32,8 +33,8 @@ export default function AppLayout() {
     <div className="app-shell">
       <aside className="app-sidebar">
         <div className="app-sidebar__brand">
-          <span className="app-sidebar__mark">JMC</span>
-          <span className="app-sidebar__name">SGI · JMC</span>
+          <span className="app-sidebar__mark">SGI</span>
+          <span className="app-sidebar__name">SGI · Sistema de Gestão Institucional</span>
         </div>
 
         <nav className="app-sidebar__nav">

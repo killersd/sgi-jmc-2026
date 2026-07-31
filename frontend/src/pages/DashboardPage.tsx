@@ -17,28 +17,28 @@ export default function DashboardPage() {
           <span className="dashboard__card-icon">▤</span>
           <div>
             <h3>Alunos</h3>
-            <p>Consultar, matricular e atualizar dados de alunos.</p>
+            <p>Consultar, atualizar e excluir dados de alunos.</p>
           </div>
         </a>
         <a className="dashboard__card" href="/declaracoes">
           <span className="dashboard__card-icon">▥</span>
           <div>
             <h3>Declarações</h3>
-            <p>Buscar aluno pelo código e emitir declaração de frequência em PDF.</p>
+            <p>Buscar aluno pelo código e emitir declaração de frequência.</p>
           </div>
         </a>
         <a className="dashboard__card" href="/oficios">
           <span className="dashboard__card-icon">✉</span>
           <div>
             <h3>Ofícios</h3>
-            <p>Emitir ofício geral (carta oficial) em PDF.</p>
+            <p>Emitir ofício geral.</p>
           </div>
         </a>
         <a className="dashboard__card" href="/horarios">
           <span className="dashboard__card-icon">▦</span>
           <div>
             <h3>Horários</h3>
-            <p>Grade semanal de aulas por professor, fácil de editar.</p>
+            <p>Grade semanal de aulas por professor.</p>
           </div>
         </a>
         <a className="dashboard__card" href="/professores">
@@ -53,6 +53,13 @@ export default function DashboardPage() {
           <div>
             <h3>Turmas</h3>
             <p>Catálogo de turmas usado nos horários.</p>
+          </div>
+        </a>
+        <a className="dashboard__card" href="/ocorrencias">
+          <span className="dashboard__card-icon">⚠</span>
+          <div>
+            <h3>Advertências e Suspensões</h3>
+            <p>Buscar aluno pelo código e emitir a advertência ou suspensão.</p>
           </div>
         </a>
       </section>

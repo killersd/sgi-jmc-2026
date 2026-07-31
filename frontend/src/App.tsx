@@ -11,6 +11,7 @@ import HorariosPage from "./pages/HorariosPage";
 import HorarioEditorPage from "./pages/HorarioEditorPage";
 import ProfessoresPage from "./pages/ProfessoresPage";
 import TurmasPage from "./pages/TurmasPage";
+import OcorrenciasPage from "./pages/OcorrenciasPage";
 
 export default function App() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
             <Route path="horarios/:id" element={<HorarioEditorPage />} />
             <Route path="professores" element={<ProfessoresPage />} />
             <Route path="turmas" element={<TurmasPage />} />
+            <Route path="ocorrencias" element={<OcorrenciasPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
