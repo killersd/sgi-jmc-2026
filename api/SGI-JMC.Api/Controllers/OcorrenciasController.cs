@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SGI_JMC.Api.Authorization;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Drawing.Layout;
 using SGI_JMC.Api.Data;
@@ -11,7 +12,8 @@ namespace SGI_JMC.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "usuario,administrador")]
+[Authorize]
+[RequerModulo(Modulos.Ocorrencias)]
 public class OcorrenciasController : ControllerBase
 {
     private readonly AppDbContext _context;

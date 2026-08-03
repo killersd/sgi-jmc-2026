@@ -1,26 +1,37 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SGI_JMC.Api.Authorization;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Drawing.Layout;
 using SGI_JMC.Api.Data;
 using SGI_JMC.Api.DTOs;
 using SGI_JMC.Api.Models;
+using SGI_JMC.Api.Services;
 
 namespace SGI_JMC.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "usuario,administrador")]
+[Authorize]
+[RequerModulo(Modulos.Declaracoes)]
 public class DeclaracoesController : ControllerBase
 {
     private readonly AppDbContext _context;
     private readonly IWebHostEnvironment _env;
+    private readonly IEmailService _emailService;
+    private readonly ILogger<DeclaracoesController> _logger;
 
-    public DeclaracoesController(AppDbContext context, IWebHostEnvironment env)
+    public DeclaracoesController(
+        AppDbContext context,
+        IWebHostEnvironment env,
+        IEmailService emailService,
+        ILogger<DeclaracoesController> logger)
     {
         _context = context;
         _env = env;
+        _emailService = emailService;
+        _logger = logger;
     }
 
     // GET api/declaracoes/buscar-aluno/MAT-2026-0001
@@ -50,7 +61,7 @@ public class DeclaracoesController : ControllerBase
 
         var itens = await query
             .OrderByDescending(d => d.DataDeEmissao)
-            .Select(d => new DeclaracaoEmitidaDto(d.Id, d.NomeAluno, d.NumeroDeclaracao, d.CodigoAutenticacao, d.DataDeEmissao))
+            .Select(d => new DeclaracaoEmitidaDto(d.Id, d.NomeAluno, d.NumeroDeclaracao, d.CodigoAutenticacao, d.DataDeEmissao, d.Tipo))
             .ToListAsync();
 
         return Ok(itens);
@@ -90,7 +101,8 @@ public class DeclaracoesController : ControllerBase
             NumeroDeclaracao = numeroDeclaracao,
             CodigoAutenticacao = codigoAutenticacao,
             DataDeEmissao = emitidoEm,
-            EmitidoPor = User.FindFirst("nomeCompleto")?.Value ?? User.Identity?.Name
+            EmitidoPor = User.FindFirst("nomeCompleto")?.Value ?? User.Identity?.Name,
+            Tipo = TipoDeclaracao.Frequencia
         };
 
         var pdfBytes = GerarPdf(declaracao);
@@ -100,6 +112,83 @@ public class DeclaracoesController : ControllerBase
 
         var nomeArquivo = $"Declaracao {aluno.Nome}.pdf";
         return File(pdfBytes, "application/pdf", nomeArquivo);
+    }
+
+    // POST api/declaracoes/transferencia
+    // Gera o PDF da declaração de transferência e notifica por e-mail o endereço configurado
+    // em Administração → Notificações, com os dados do aluno e do servidor que emitiu.
+    [HttpPost("transferencia")]
+    public async Task<IActionResult> GerarDeclaracaoTransferencia(GerarDeclaracaoTransferenciaRequest request)
+    {
+        var aluno = await _context.Alunos.AsNoTracking()
+            .FirstOrDefaultAsync(a => a.CodigoSeed == request.CodigoSeed);
+
+        if (aluno is null)
+            return NotFound(new { mensagem = "Nenhum aluno encontrado com esse código." });
+
+        if (aluno.AnoSerie is null || string.IsNullOrWhiteSpace(aluno.Turma))
+            return BadRequest(new { mensagem = "Este aluno não possui ano/série ou turma cadastrados." });
+
+        var numeroDeclaracao = new Random().Next().GetHashCode();
+        var codigoAutenticacao = numeroDeclaracao.ToString("x");
+        var emitidoEm = DateTime.UtcNow;
+        var emitidoPor = User.FindFirst("nomeCompleto")?.Value ?? User.Identity?.Name;
+
+        var declaracao = new Declaracao
+        {
+            NomeAluno = aluno.Nome,
+            NomePai = aluno.Pai,
+            NomeMae = aluno.Mae,
+            DataNascimento = aluno.DataNascimento,
+            AnoLetivo = aluno.AnoLetivo,
+            AnoSerie = aluno.AnoSerie.Value,
+            Turma = aluno.Turma!,
+            NumeroDoNis = aluno.NumeroDoNis,
+            CodigoSeed = aluno.CodigoSeed,
+            NumeroDeclaracao = numeroDeclaracao,
+            CodigoAutenticacao = codigoAutenticacao,
+            DataDeEmissao = emitidoEm,
+            EmitidoPor = emitidoPor,
+            Tipo = TipoDeclaracao.Transferencia,
+            EscolaDestino = request.EscolaDestino,
+            MotivoTransferencia = request.Motivo
+        };
+
+        var pdfBytes = GerarPdfTransferencia(declaracao);
+
+        _context.Declaracoes.Add(declaracao);
+        await _context.SaveChangesAsync();
+
+        await NotificarTransferenciaAsync(declaracao, emitidoPor);
+
+        var nomeArquivo = $"Declaracao de Transferencia {aluno.Nome}.pdf";
+        return File(pdfBytes, "application/pdf", nomeArquivo);
+    }
+
+    private async Task NotificarTransferenciaAsync(Declaracao declaracao, string? emitidoPor)
+    {
+        try
+        {
+            var configuracao = await _context.ConfiguracoesNotificacoes.AsNoTracking().FirstOrDefaultAsync();
+            var destinatario = configuracao?.EmailNotificacaoTransferencia;
+            if (string.IsNullOrWhiteSpace(destinatario))
+                return;
+
+            var corpoHtml =
+                $"<p>Uma declaração de transferência foi emitida.</p>" +
+                $"<p><strong>Aluno:</strong> {declaracao.NomeAluno}<br/>" +
+                $"<strong>Código do aluno:</strong> {declaracao.CodigoSeed}<br/>" +
+                $"<strong>Escola de destino:</strong> {declaracao.EscolaDestino}<br/>" +
+                $"<strong>Motivo:</strong> {declaracao.MotivoTransferencia ?? "—"}<br/>" +
+                $"<strong>Emitido por:</strong> {emitidoPor ?? "—"}<br/>" +
+                $"<strong>Data de emissão:</strong> {declaracao.DataDeEmissao:dd/MM/yyyy}</p>";
+
+            await _emailService.EnviarAsync(destinatario, $"Declaração de transferência emitida — {declaracao.NomeAluno}", corpoHtml);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Falha ao enviar e-mail de notificação de transferência do aluno {CodigoSeed}", declaracao.CodigoSeed);
+        }
     }
 
     // Réplica do layout gerado em SGI-JMC/Controllers/DeclaracaoController.cs (gerarDeclaracao)
@@ -156,6 +245,95 @@ public class DeclaracoesController : ControllerBase
             $"Declaro para os devidos fins que o aluno(a) {declaracao.NomeAluno.ToUpper()}, nascido(a) em {dataNascString}, {filiacao}" +
             $"no ano letivo de {declaracao.AnoLetivo}, encontra-se matriculado(a) nesta Unidade de Ensino no {declaracao.AnoSerie}º ano, " +
             $"turma \"{declaracao.Turma.ToUpper()}\" e da carga horária anual (833 horas), possui frequência de {porcentagemDeFaltas}% nesta data.",
+            fonteDescricao, corFonte, new XRect(0, 270, page.Width, page.Height));
+
+        textFormatter.DrawString($"NIS: {numeroDoNis}", fonteDescricao, corFonte, new XRect(0, 400, page.Width, page.Height));
+        textFormatter.DrawString($"Código do aluno: {declaracao.CodigoSeed}", fonteDescricao, corFonte, new XRect(0, 415, page.Width, page.Height));
+        textFormatter.DrawString(
+            "Observação: Esta declaração não contém emendas nem rasuras e é válida por um período de 30 dias ",
+            fonteDescricao, corFonte, new XRect(0, 730, page.Width, page.Height));
+
+        textFormatter.Alignment = XParagraphAlignment.Center;
+        textFormatter.DrawString(new string('_', 60), fonteDetalhes, corFonte, new XRect(0, 470, page.Width, page.Height));
+        textFormatter.DrawString("Equipe Diretiva", fonteDescricao, corFonte, new XRect(0, 480, page.Width, page.Height));
+
+        textFormatter.DrawString($"Número do documento: {declaracao.NumeroDeclaracao}", fonteDescricao, corFonte, new XRect(0, 600, page.Width, page.Height));
+        textFormatter.DrawString($"Código de verificação: {declaracao.CodigoAutenticacao}", fonteDescricao, corFonte, new XRect(0, 613, page.Width, page.Height));
+        textFormatter.DrawString(
+            "Para verificar a autenticidade deste documento acesse o portal do SGI-JMC, preencha os dados " +
+            "\"Número do documento\" e \"Código de verificação\" com os códigos acima depois clique no botão \"Verificar autenticidade\" ",
+            fonteDetalhes, corFonte, new XRect(0, 635, page.Width, page.Height));
+
+        textFormatter.Alignment = XParagraphAlignment.Center;
+        textFormatter.DrawString($"Declaração emitida em {declaracao.DataDeEmissao:dd/MM/yyyy}", fonteDetalhes, corFonte, new XRect(0, 780, page.Width, page.Height));
+
+        textFormatter.Alignment = XParagraphAlignment.Justify;
+        textFormatter.DrawString(new string('_', 89), fonteDescricao, corFonte, new XRect(0, 750, page.Width, page.Height));
+        textFormatter.DrawString("Esta declaração foi gerada através do SGI da Escola Estadual João de Mattos Carvalho ", fonteRodape, corFonte, new XRect(0, 810, page.Width, page.Height));
+
+        textFormatter.Alignment = XParagraphAlignment.Right;
+        textFormatter.DrawString("Contato: eejmc.seed@seduc.se.gov.br ", fonteRodape, corFonte, new XRect(0, 810, page.Width, page.Height));
+        textFormatter.DrawString("SGI-Sistema de Gerenciamento Interno - EEJMC ", fonteRodape, corFonte, new XRect(0, 30, page.Width, page.Height));
+        textFormatter.DrawString($"Usuário: {declaracao.EmitidoPor}", fonteRodape, corFonte, new XRect(0, 40, page.Width, page.Height));
+
+        using var stream = new MemoryStream();
+        doc.Save(stream, false);
+        return stream.ToArray();
+    }
+
+    // Mesmo layout/cabeçalho/rodapé de GerarPdf, com o corpo específico de transferência.
+    private byte[] GerarPdfTransferencia(Declaracao declaracao)
+    {
+        using var doc = new PdfSharpCore.Pdf.PdfDocument();
+        var page = doc.AddPage();
+        page.Size = PdfSharpCore.PageSize.A4;
+        page.TrimMargins.Right = 50;
+        page.TrimMargins.Left = 50;
+        page.Orientation = PdfSharpCore.PageOrientation.Portrait;
+
+        var graphics = XGraphics.FromPdfPage(page);
+        var corFonte = XBrushes.Black;
+        var textFormatter = new XTextFormatter(graphics);
+        var fonteDescricao = new XFont("Calibri", 14);
+        var fonteTitulo = new XFont("Calibri", 17, XFontStyle.Bold);
+        var fonteDetalhes = new XFont("Calibri", 10);
+        var fonteRodape = new XFont("Calibri", 7);
+
+        var imagensDir = Path.Combine(_env.ContentRootPath, "wwwroot", "Imagens");
+        var imgBrasao = XImage.FromFile(Path.Combine(imagensDir, "BrasaoEstado.png"));
+        var imgEscudo = XImage.FromFile(Path.Combine(imagensDir, "Escudo.png"));
+        var imgLogo = XImage.FromFile(Path.Combine(imagensDir, "SGI.jpg"));
+
+        textFormatter.Alignment = XParagraphAlignment.Left;
+        graphics.DrawImage(imgBrasao, 0, 30, 50, 75);
+        graphics.DrawImage(imgEscudo, 75, 280, 450, 450);
+        graphics.DrawImage(imgLogo, 480, 60, 120, 50);
+
+        textFormatter.DrawString("GOVERNO DO ESTADO DE SERGIPE", fonteDescricao, corFonte, new XRect(55, 30, page.Width, page.Height));
+        textFormatter.DrawString("SECRETARIA DE ESTADO DA EDUCAÇÃO E DA CULTURA", fonteDescricao, corFonte, new XRect(55, 45, page.Width, page.Height));
+        textFormatter.DrawString("ESCOLA ESTADUAL JOÃO DE MATTOS CARVALHO", fonteDescricao, corFonte, new XRect(55, 60, page.Width, page.Height));
+        textFormatter.DrawString("CNPJ: 01.902.194/0001-83", fonteDescricao, corFonte, new XRect(55, 75, page.Width, page.Height));
+        textFormatter.DrawString("PRAÇA ABEL JACÓ DOS SANTOS, Nº 892, CENTRO, SIMÃO DIAS - SE", fonteDescricao, corFonte, new XRect(55, 90, page.Width, page.Height));
+        textFormatter.DrawString(new string('_', 89), fonteDescricao, corFonte, new XRect(0, 100, page.Width, page.Height));
+
+        textFormatter.Alignment = XParagraphAlignment.Center;
+        textFormatter.DrawString("DECLARAÇÃO DE TRANSFERÊNCIA", fonteTitulo, corFonte, new XRect(0, 200, page.Width, page.Height));
+
+        var dataNascString = declaracao.DataNascimento.ToString("dd/MM/yyyy");
+        var numeroDoNis = string.IsNullOrWhiteSpace(declaracao.NumeroDoNis)
+            ? "Não encontrado em nossos registros!"
+            : declaracao.NumeroDoNis;
+
+        textFormatter.Alignment = XParagraphAlignment.Justify;
+        var filiacao = string.IsNullOrWhiteSpace(declaracao.NomePai)
+            ? $"filho(a) de {declaracao.NomeMae.ToUpper()}, "
+            : $"filho(a) de {declaracao.NomeMae.ToUpper()} e {declaracao.NomePai.ToUpper()}, ";
+
+        textFormatter.DrawString(
+            $"Declaro para os devidos fins que o aluno(a) {declaracao.NomeAluno.ToUpper()}, nascido(a) em {dataNascString}, {filiacao}" +
+            $"no ano letivo de {declaracao.AnoLetivo}, estava matriculado(a) nesta Unidade de Ensino no {declaracao.AnoSerie}º ano, " +
+            $"turma \"{declaracao.Turma.ToUpper()}\", e foi transferido(a) para a instituição de ensino {declaracao.EscolaDestino!.ToUpper()}" +
+            (string.IsNullOrWhiteSpace(declaracao.MotivoTransferencia) ? "." : $", pelo seguinte motivo: {declaracao.MotivoTransferencia}."),
             fonteDescricao, corFonte, new XRect(0, 270, page.Width, page.Height));
 
         textFormatter.DrawString($"NIS: {numeroDoNis}", fonteDescricao, corFonte, new XRect(0, 400, page.Width, page.Height));

@@ -1,9 +1,20 @@
 import { useAuth } from "../context/AuthContext";
 import "./DashboardPage.css";
 
+const cards = [
+  { href: "/alunos", modulo: "alunos", icon: "▤", titulo: "Alunos", texto: "Consultar, matricular e atualizar dados de alunos." },
+  { href: "/declaracoes", modulo: "declaracoes", icon: "▥", titulo: "Declarações", texto: "Buscar aluno pelo código e emitir declaração de frequência em PDF." },
+  { href: "/oficios", modulo: "oficios", icon: "✉", titulo: "Ofícios", texto: "Emitir ofício geral (carta oficial) em PDF." },
+  { href: "/horarios", modulo: "horarios", icon: "▦", titulo: "Horários", texto: "Grade semanal de aulas por professor, fácil de editar." },
+  { href: "/professores", modulo: "professores", icon: "👤", titulo: "Professores", texto: "Cadastro de professores e disciplinas que lecionam." },
+  { href: "/turmas", modulo: "turmas", icon: "🏷", titulo: "Turmas", texto: "Catálogo de turmas usado nos horários." },
+  { href: "/ocorrencias", modulo: "ocorrencias", icon: "⚠", titulo: "Advertências e Suspensões", texto: "Buscar aluno pelo código e emitir o documento em PDF." },
+];
+
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, isAdmin, isDiretor, podeAcessarModulo } = useAuth();
   const primeiroNome = user?.nome?.split(" ")[0] ?? "";
+  const cardsVisiveis = cards.filter((c) => podeAcessarModulo(c.modulo));
 
   return (
     <div className="dashboard">
@@ -13,55 +24,29 @@ export default function DashboardPage() {
       </header>
 
       <section className="dashboard__grid">
-        <a className="dashboard__card" href="/alunos">
-          <span className="dashboard__card-icon">▤</span>
-          <div>
-            <h3>Alunos</h3>
-            <p>Consultar, atualizar e excluir dados de alunos.</p>
-          </div>
-        </a>
-        <a className="dashboard__card" href="/declaracoes">
-          <span className="dashboard__card-icon">▥</span>
-          <div>
-            <h3>Declarações</h3>
-            <p>Buscar aluno pelo código e emitir declaração de frequência.</p>
-          </div>
-        </a>
-        <a className="dashboard__card" href="/oficios">
-          <span className="dashboard__card-icon">✉</span>
-          <div>
-            <h3>Ofícios</h3>
-            <p>Emitir ofício geral.</p>
-          </div>
-        </a>
-        <a className="dashboard__card" href="/horarios">
-          <span className="dashboard__card-icon">▦</span>
-          <div>
-            <h3>Horários</h3>
-            <p>Grade semanal de aulas por professor.</p>
-          </div>
-        </a>
-        <a className="dashboard__card" href="/professores">
-          <span className="dashboard__card-icon">👤</span>
-          <div>
-            <h3>Professores</h3>
-            <p>Cadastro de professores e disciplinas que lecionam.</p>
-          </div>
-        </a>
-        <a className="dashboard__card" href="/turmas">
-          <span className="dashboard__card-icon">🏷</span>
-          <div>
-            <h3>Turmas</h3>
-            <p>Catálogo de turmas usado nos horários.</p>
-          </div>
-        </a>
-        <a className="dashboard__card" href="/ocorrencias">
-          <span className="dashboard__card-icon">⚠</span>
-          <div>
-            <h3>Advertências e Suspensões</h3>
-            <p>Buscar aluno pelo código e emitir a advertência ou suspensão.</p>
-          </div>
-        </a>
+        {cardsVisiveis.map((card) => (
+          <a className="dashboard__card" href={card.href} key={card.href}>
+            <span className="dashboard__card-icon">{card.icon}</span>
+            <div>
+              <h3>{card.titulo}</h3>
+              <p>{card.texto}</p>
+            </div>
+          </a>
+        ))}
+
+        {(isAdmin || isDiretor) && (
+          <a className="dashboard__card" href="/administracao">
+            <span className="dashboard__card-icon">⚙</span>
+            <div>
+              <h3>Administração</h3>
+              <p>Controle de acesso por perfil e gestão de usuários.</p>
+            </div>
+          </a>
+        )}
+
+        {cardsVisiveis.length === 0 && !isAdmin && !isDiretor && (
+          <p className="horarios-page__estado">Seu perfil ainda não tem módulos liberados. Fale com a direção.</p>
+        )}
       </section>
     </div>
   );

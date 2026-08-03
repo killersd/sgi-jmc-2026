@@ -1,15 +1,18 @@
 import { type FormEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "./LoginPage.css";
 
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [carregando, setCarregando] = useState(false);
+  const contaAtivada = searchParams.get("ativado") === "1";
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -18,8 +21,15 @@ export default function LoginPage() {
     try {
       await login(email, senha);
       navigate("/", { replace: true });
-    } catch {
-      setErro("E-mail ou senha inválidos.");
+    } catch (err) {
+      const codigo = axios.isAxiosError(err) ? err.response?.data?.codigo : null;
+      if (codigo === "EMAIL_NAO_CONFIRMADO") {
+        setErro("Sua conta ainda não foi ativada. Verifique o e-mail de ativação enviado à sua caixa de entrada.");
+      } else if (codigo === "CONTA_INATIVA") {
+        setErro("Sua conta foi desativada. Entre em contato com o administrador.");
+      } else {
+        setErro("E-mail ou senha inválidos.");
+      }
     } finally {
       setCarregando(false);
     }
@@ -72,6 +82,9 @@ export default function LoginPage() {
             />
           </label>
 
+          {contaAtivada && !erro && (
+            <div className="login-form__sucesso">Conta ativada com sucesso. Faça login com sua nova senha.</div>
+          )}
           {erro && <div className="login-form__error">{erro}</div>}
 
           <button type="submit" className="btn btn--primary" disabled={carregando}>

@@ -92,4 +92,5 @@
 }
 
 .badge--success { color: var(--success); background: var(--success-bg); }
+.badge--warning { color: var(--warning); background: var(--warning-bg); }
 .badge--muted { color: var(--text-muted); background: var(--bg-surface-muted); }

@@ -108,6 +108,14 @@
   font-size: 13px;
 }
 
+.login-form__sucesso {
+  background: var(--success-bg);
+  color: var(--success);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
 .field {
   display: flex;
   flex-direction: column;

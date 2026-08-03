@@ -13,6 +13,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Declaracao> Declaracoes => Set<Declaracao>();
     public DbSet<Oficio> Oficios => Set<Oficio>();
     public DbSet<OficioFuncao> OficiosFuncao => Set<OficioFuncao>();
+    public DbSet<PerfilPermissao> PerfilPermissoes => Set<PerfilPermissao>();
     public DbSet<HorarioProfessor> HorariosProfessor => Set<HorarioProfessor>();
     public DbSet<Professor> Professores => Set<Professor>();
     public DbSet<Disciplina> Disciplinas => Set<Disciplina>();
@@ -20,6 +21,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Turma> Turmas => Set<Turma>();
     public DbSet<Advertencia> Advertencias => Set<Advertencia>();
     public DbSet<Suspensao> Suspensoes => Set<Suspensao>();
+    public DbSet<ConfiguracaoNotificacoes> ConfiguracoesNotificacoes => Set<ConfiguracaoNotificacoes>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -44,6 +46,11 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<Turma>(entity =>
         {
             entity.HasIndex(t => t.Nome).IsUnique();
+        });
+
+        builder.Entity<PerfilPermissao>(entity =>
+        {
+            entity.HasKey(p => new { p.Perfil, p.ModuloChave });
         });
 
         builder.Entity<ProfessorDisciplina>(entity =>

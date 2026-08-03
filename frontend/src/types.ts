@@ -3,6 +3,7 @@ export interface AuthUser {
   nome: string;
   email: string;
   roles: string[];
+  modulosPermitidos: string[];
 }
 
 export interface AuthResponse {
@@ -12,6 +13,58 @@ export interface AuthResponse {
   nome: string;
   email: string;
   roles: string[];
+  modulosPermitidos: string[];
+}
+
+export const PERFIS_DISPONIVEIS = [
+  { chave: "administrador", nome: "Administrador" },
+  { chave: "diretor", nome: "Diretor Escolar" },
+  { chave: "secretario", nome: "Secretário Escolar" },
+  { chave: "oficial_administrativo", nome: "Oficial Administrativo" },
+] as const;
+
+export interface Modulo {
+  chave: string;
+  nome: string;
+}
+
+export interface Perfil {
+  chave: string;
+  nome: string;
+}
+
+export interface Permissao {
+  perfil: string;
+  moduloChave: string;
+  permitido: boolean;
+}
+
+export interface MatrizPermissoes {
+  modulos: Modulo[];
+  perfisEditaveis: Perfil[];
+  permissoes: Permissao[];
+}
+
+export interface UsuarioAdmin {
+  id: string;
+  nomeCompleto: string;
+  email: string;
+  perfis: string[];
+  emailConfirmado: boolean;
+  ativo: boolean;
+  cpf?: string | null;
+  dataNascimento?: string | null;
+}
+
+export interface UsuarioCriado {
+  id: string;
+  nomeCompleto: string;
+  email: string;
+  emailEnviado: boolean;
+}
+
+export interface ConfiguracaoNotificacoes {
+  emailNotificacaoTransferencia: string | null;
 }
 
 export interface Aluno {

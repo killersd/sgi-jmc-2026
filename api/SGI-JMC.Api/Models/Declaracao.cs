@@ -24,4 +24,8 @@ public class Declaracao
 
     public DateTime DataDeEmissao { get; set; }
     public string? EmitidoPor { get; set; }
+
+    public string Tipo { get; set; } = TipoDeclaracao.Frequencia;
+    public string? EscolaDestino { get; set; }
+    public string? MotivoTransferencia { get; set; }
 }

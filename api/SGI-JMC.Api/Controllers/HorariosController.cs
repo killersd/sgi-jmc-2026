@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SGI_JMC.Api.Authorization;
 using PdfSharpCore.Drawing;
 using SGI_JMC.Api.Data;
 using SGI_JMC.Api.DTOs;
@@ -11,7 +12,8 @@ namespace SGI_JMC.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "usuario,administrador")]
+[Authorize]
+[RequerModulo(Modulos.Horarios)]
 public class HorariosController : ControllerBase
 {
     private readonly AppDbContext _context;

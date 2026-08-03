@@ -24,3 +24,21 @@ export async function imprimirDeclaracaoFrequencia(
 
   return { blob: response.data as Blob, nomeArquivo };
 }
+
+export async function imprimirDeclaracaoTransferencia(
+  codigoSeed: string,
+  escolaDestino: string,
+  motivo: string
+): Promise<{ blob: Blob; nomeArquivo: string }> {
+  const response = await apiClient.post(
+    "/declaracoes/transferencia",
+    { codigoSeed, escolaDestino, motivo: motivo || null },
+    { responseType: "blob" }
+  );
+
+  const disposicao: string = response.headers["content-disposition"] ?? "";
+  const match = disposicao.match(/filename="?([^"]+)"?/);
+  const nomeArquivo = match?.[1] ?? "declaracao-transferencia.pdf";
+
+  return { blob: response.data as Blob, nomeArquivo };
+}

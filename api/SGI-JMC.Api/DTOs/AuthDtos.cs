@@ -10,7 +10,7 @@ public record LoginRequest(
 public record RegisterRequest(
     [Required] string NomeCompleto,
     [Required, EmailAddress] string Email,
-    [Required, MinLength(6)] string Senha,
+    [Required] string Perfil,
     string? CPF,
     DateTime? DataNascimento
 );
@@ -21,5 +21,19 @@ public record AuthResponse(
     string Id,
     string Nome,
     string Email,
-    IList<string> Roles
+    IList<string> Roles,
+    List<string> ModulosPermitidos
+);
+
+public record UsuarioCriadoDto(
+    string Id,
+    string NomeCompleto,
+    string Email,
+    bool EmailEnviado
+);
+
+public record AtivarContaRequest(
+    [Required] string UserId,
+    [Required] string Token,
+    [Required, MinLength(6)] string NovaSenha
 );

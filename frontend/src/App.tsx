@@ -3,6 +3,7 @@ import { AuthProvider } from "./context/AuthContext";
 import RequireAuth from "./routes/RequireAuth";
 import AppLayout from "./layouts/AppLayout";
 import LoginPage from "./pages/LoginPage";
+import AtivarContaPage from "./pages/AtivarContaPage";
 import DashboardPage from "./pages/DashboardPage";
 import AlunosPage from "./pages/AlunosPage";
 import DeclaracoesPage from "./pages/DeclaracoesPage";
@@ -12,6 +13,7 @@ import HorarioEditorPage from "./pages/HorarioEditorPage";
 import ProfessoresPage from "./pages/ProfessoresPage";
 import TurmasPage from "./pages/TurmasPage";
 import OcorrenciasPage from "./pages/OcorrenciasPage";
+import AdministracaoPage from "./pages/AdministracaoPage";
 
 export default function App() {
   return (
@@ -19,6 +21,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/ativar-conta" element={<AtivarContaPage />} />
           <Route
             path="/"
             element={
@@ -36,6 +39,7 @@ export default function App() {
             <Route path="professores" element={<ProfessoresPage />} />
             <Route path="turmas" element={<TurmasPage />} />
             <Route path="ocorrencias" element={<OcorrenciasPage />} />
+            <Route path="administracao" element={<AdministracaoPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -307,6 +307,9 @@ namespace SGI_JMC.Api.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("CPF")
                         .HasColumnType("text");
 
@@ -373,6 +376,22 @@ namespace SGI_JMC.Api.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("SGI_JMC.Api.Models.ConfiguracaoNotificacoes", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("EmailNotificacaoTransferencia")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ConfiguracoesNotificacoes");
+                });
+
             modelBuilder.Entity("SGI_JMC.Api.Models.Declaracao", b =>
                 {
                     b.Property<int>("Id")
@@ -404,6 +423,12 @@ namespace SGI_JMC.Api.Migrations
                     b.Property<string>("EmitidoPor")
                         .HasColumnType("text");
 
+                    b.Property<string>("EscolaDestino")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MotivoTransferencia")
+                        .HasColumnType("text");
+
                     b.Property<string>("NomeAluno")
                         .IsRequired()
                         .HasColumnType("text");
@@ -423,6 +448,10 @@ namespace SGI_JMC.Api.Migrations
 
                     b.Property<int>("QtdFaltas")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Turma")
                         .IsRequired()
@@ -592,6 +621,22 @@ namespace SGI_JMC.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("OficiosFuncao");
+                });
+
+            modelBuilder.Entity("SGI_JMC.Api.Models.PerfilPermissao", b =>
+                {
+                    b.Property<string>("Perfil")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ModuloChave")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Permitido")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Perfil", "ModuloChave");
+
+                    b.ToTable("PerfilPermissoes");
                 });
 
             modelBuilder.Entity("SGI_JMC.Api.Models.Professor", b =>

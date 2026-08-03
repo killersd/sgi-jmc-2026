@@ -1,5 +1,5 @@
 import { type FormEvent, useState } from "react";
-import { buscarAlunoPorCodigo, imprimirDeclaracaoFrequencia } from "../api/declaracoes";
+import { buscarAlunoPorCodigo, imprimirDeclaracaoFrequencia, imprimirDeclaracaoTransferencia } from "../api/declaracoes";
 import type { AlunoParaDeclaracao } from "../types";
 import CodigoBadge from "../components/CodigoBadge";
 import "./DeclaracoesPage.css";
@@ -17,15 +17,23 @@ export default function DeclaracoesPage() {
   const [imprimindo, setImprimindo] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
+  const [escolaDestino, setEscolaDestino] = useState("");
+  const [motivoTransferencia, setMotivoTransferencia] = useState("");
+  const [imprimindoTransferencia, setImprimindoTransferencia] = useState(false);
+  const [erroTransferencia, setErroTransferencia] = useState<string | null>(null);
+
   async function handleBuscar(event: FormEvent) {
     event.preventDefault();
     setErro(null);
+    setErroTransferencia(null);
     setAluno(null);
     setBuscando(true);
     try {
       const resultado = await buscarAlunoPorCodigo(codigo.trim());
       setAluno(resultado);
       setQtdFaltas(0);
+      setEscolaDestino("");
+      setMotivoTransferencia("");
     } catch {
       setErro("Nenhum aluno encontrado com esse código.");
     } finally {
@@ -49,6 +57,29 @@ export default function DeclaracoesPage() {
       setErro("Não foi possível gerar a declaração. Verifique se o aluno tem ano/série e turma cadastrados.");
     } finally {
       setImprimindo(false);
+    }
+  }
+
+  async function handleImprimirTransferencia() {
+    if (!aluno || !escolaDestino.trim()) return;
+    setErroTransferencia(null);
+    setImprimindoTransferencia(true);
+    try {
+      const { blob, nomeArquivo } = await imprimirDeclaracaoTransferencia(
+        aluno.codigoSeed,
+        escolaDestino.trim(),
+        motivoTransferencia.trim()
+      );
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = nomeArquivo;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    } catch {
+      setErroTransferencia("Não foi possível gerar a declaração. Verifique se o aluno tem ano/série e turma cadastrados.");
+    } finally {
+      setImprimindoTransferencia(false);
     }
   }
 
@@ -110,6 +141,35 @@ export default function DeclaracoesPage() {
               {imprimindo ? "Gerando PDF..." : "🖨️ Imprimir declaração"}
             </button>
           </div>
+
+          <h3 className="declaracoes-page__subtitulo">Declaração de transferência</h3>
+          <div className="aluno-card__acao">
+            <label className="field aluno-card__faltas">
+              <span>Escola de destino</span>
+              <input
+                required
+                value={escolaDestino}
+                onChange={(e) => setEscolaDestino(e.target.value)}
+                placeholder="Ex: Escola Estadual Exemplo"
+              />
+            </label>
+            <label className="field aluno-card__faltas">
+              <span>Motivo (opcional)</span>
+              <input
+                value={motivoTransferencia}
+                onChange={(e) => setMotivoTransferencia(e.target.value)}
+                placeholder="Ex: Mudança de endereço"
+              />
+            </label>
+            <button
+              className="btn btn--primary"
+              onClick={handleImprimirTransferencia}
+              disabled={imprimindoTransferencia || !escolaDestino.trim()}
+            >
+              {imprimindoTransferencia ? "Gerando PDF..." : "🖨️ Imprimir declaração de transferência"}
+            </button>
+          </div>
+          {erroTransferencia && <div className="declaracoes-page__error">{erroTransferencia}</div>}
         </div>
       )}
     </div>

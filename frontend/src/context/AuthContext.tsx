@@ -6,8 +6,11 @@ interface AuthContextValue {
   user: AuthUser | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
+  isDiretor: boolean;
+  podeAcessarModulo: (chave: string) => boolean;
   login: (email: string, senha: string) => Promise<void>;
   logout: () => void;
+  atualizarModulosPermitidos: (modulos: string[]) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -32,6 +35,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user,
     isAuthenticated: !!user,
     isAdmin: !!user?.roles.includes("administrador"),
+    isDiretor: !!user?.roles.includes("diretor"),
+    podeAcessarModulo(chave: string) {
+      if (!user) return false;
+      if (user.roles.includes("administrador")) return true;
+      return (user.modulosPermitidos ?? []).includes(chave);
+    },
     async login(email: string, senha: string) {
       const resposta = await loginRequest(email, senha);
       const authUser: AuthUser = {
@@ -39,6 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         nome: resposta.nome,
         email: resposta.email,
         roles: resposta.roles,
+        modulosPermitidos: resposta.modulosPermitidos,
       };
       localStorage.setItem(TOKEN_KEY, resposta.token);
       localStorage.setItem(USER_KEY, JSON.stringify(authUser));
@@ -48,6 +58,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem(TOKEN_KEY);
       localStorage.removeItem(USER_KEY);
       setUser(null);
+    },
+    atualizarModulosPermitidos(modulos: string[]) {
+      setUser((prev) => {
+        if (!prev) return prev;
+        const atualizado = { ...prev, modulosPermitidos: modulos };
+        localStorage.setItem(USER_KEY, JSON.stringify(atualizado));
+        return atualizado;
+      });
     },
   }), [user]);
 

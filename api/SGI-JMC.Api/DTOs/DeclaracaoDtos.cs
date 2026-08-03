@@ -16,10 +16,13 @@ public record AlunoParaDeclaracaoDto(
 
 public record GerarDeclaracaoRequest(string CodigoSeed, int QtdFaltas);
 
+public record GerarDeclaracaoTransferenciaRequest(string CodigoSeed, string EscolaDestino, string? Motivo);
+
 public record DeclaracaoEmitidaDto(
     int Id,
     string NomeAluno,
     int NumeroDeclaracao,
     string CodigoAutenticacao,
-    DateTime DataDeEmissao
+    DateTime DataDeEmissao,
+    string Tipo
 );
