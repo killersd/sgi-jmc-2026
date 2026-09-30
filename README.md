@@ -4,16 +4,15 @@ Este pacote contém a divisão do sistema **SGI-JMC** original (ASP.NET Core MVC
 monolítico) em:
 
 - **`api/`** — API REST em .NET 8 com autenticação JWT (`SGI-JMC.Api`)
-- **`frontend/`** — SPA em React + TypeScript + Vite, com paleta azul moderna
+- **`frontend/`** — SPA em React + TypeScript + Vite
 
-## Status: MVP validado
+## Funcionalidades disponíveis
 
-Para garantir que a arquitetura e o visual estejam certos antes de migrar os
-~28 módulos restantes do sistema original, este MVP cobre:
+Esta versão inclui:
 
 1. **Autenticação** (login com JWT, papéis `administrador`/`usuario`)
 2. **Módulo Alunos** completo (listar com filtros/paginação, criar, editar, excluir)
-3. **Layout e tema** definitivos (sidebar, cores, tipografia)
+3. **Layout principal** com navegação lateral, tema e tipografia definidos
 
 Veja o `README.md` de cada pasta para instruções de instalação e execução.
 
@@ -52,9 +51,8 @@ Veja o `README.md` de cada pasta para instruções de instalação e execução.
 
 Também dá pra rodar tudo de uma vez com a task **"Rodar tudo (API + Frontend)"**.
 
-> O visual do frontend já foi validado de forma isolada (prints em anexo na
-> conversa) — sem a API rodando, a tela de Alunos aparece com um aviso de erro
-> ao carregar os dados, o que é esperado.
+> A tela de Alunos depende da API para carregar os dados. Se a API não estiver
+> em execução, será exibido um aviso de erro ao tentar carregar a lista.
 
 ## Arquitetura
 
@@ -68,10 +66,8 @@ API (.NET 8, ASP.NET Core Web API)
 PostgreSQL
 ```
 
-## Próximos passos
+## Módulos previstos
 
-Depois de validar este MVP, o próximo lote de trabalho é migrar os módulos
-restantes (Declarações, Ofícios, Horários, Contratos, Advertências, Comunicados
-etc.), sempre seguindo o mesmo padrão usado em `AlunosController` /
-`AlunosPage.tsx`. Me avise quando quiser seguir para o próximo lote — posso
-priorizar pelos módulos mais usados no dia a dia da secretaria.
+Os módulos previstos para as próximas etapas incluem Declarações, Ofícios,
+Horários, Contratos, Advertências e Comunicados. A implementação seguirá a
+estrutura adotada em `AlunosController` e `AlunosPage.tsx`.

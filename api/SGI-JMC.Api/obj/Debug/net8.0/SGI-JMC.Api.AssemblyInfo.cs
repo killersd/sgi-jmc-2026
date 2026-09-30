@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SGI-JMC.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e3b3aedeaf51c84869fcece7644bb03393cda5b0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+27a8b782a2afee97bbd3a12ae3b4a7e637f1612c")]
 [assembly: System.Reflection.AssemblyProductAttribute("SGI-JMC.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SGI-JMC.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
