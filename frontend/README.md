@@ -2,10 +2,9 @@
 
 Frontend em **React 19 + TypeScript + Vite**, consumindo a `SGI-JMC.Api`.
 
-## Paleta de cores
+## Tema visual
 
-Azul moderno, sóbrio (não preto/navy pesado), definida em `src/styles/theme.css`
-como variáveis CSS:
+As cores da interface são definidas como variáveis CSS em `src/styles/theme.css`:
 
 | Token | Uso |
 |---|---|
@@ -15,8 +14,8 @@ como variáveis CSS:
 | `--bg-app` | Fundo geral da aplicação (cinza-azulado bem claro) |
 | `--bg-surface` | Cards, tabelas, modais (branco) |
 
-Tipografia: **Sora** (títulos) + **Inter** (corpo/UI) + **IBM Plex Mono** (códigos
-de matrícula/aluno).
+Tipografia: **Sora** para títulos, **Inter** para textos e interface e
+**IBM Plex Mono** para códigos de matrícula e aluno.
 
 ## Como rodar
 
@@ -33,24 +32,19 @@ Acesse `http://localhost:5173`. Login padrão do seed da API:
 
 ```
 src/
-  api/          # client axios + chamadas (auth, alunos)
-  components/   # componentes reutilizáveis (modal de aluno, badge, confirm dialog)
-  context/       # AuthContext (JWT, usuário logado)
-  layouts/       # layout com sidebar + navegação
-  pages/         # Login, Painel, Alunos
-  routes/        # proteção de rotas autenticadas
-  styles/        # tokens de design (theme.css) + estilos utilitários (ui.css)
+  api/          # cliente HTTP e módulos de acesso à API
+  components/   # componentes reutilizáveis
+  context/      # contexto de autenticação
+  layouts/      # estrutura e navegação da aplicação
+  pages/        # páginas dos módulos
+  routes/       # rotas e proteção de acesso
+  styles/       # tema e estilos da interface
 ```
 
-## Módulos implementados neste MVP
+## Funcionalidades disponíveis
+
 - Login com JWT (persistido em `localStorage`, anexado automaticamente nas
   requisições via interceptor do axios).
-- Painel inicial.
-- Alunos: listagem com busca/filtro (ano/série, turma), paginação, criação, edição
-  e exclusão (exclusão restrita ao papel `administrador`).
-
-## Próximos passos sugeridos
-- Repetir o padrão de `pages/AlunosPage.tsx` + `api/alunos.ts` para os demais
-  módulos (Declarações, Ofícios, Horários, Contratos...).
-- Upload de foto do aluno (campo `UrlFoto` já existe no modelo).
-- Tela de administração de usuários (papéis, redefinição de senha).
+- Ativação de conta e painel inicial.
+- Páginas de Alunos, Declarações, Horários, Ocorrências, Ofícios, Professores,
+  Turmas e Administração.
